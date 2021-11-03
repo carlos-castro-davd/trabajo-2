@@ -1,2 +1,7 @@
 
+# Jaime, no elimines esto. 
+# Este archivo hace que no se me descuadre el directorio al trabajar windows-mac
+# Si a ti te pasa lo mismo, añade:   desktop.ini   debajo
+# Un saludo maquina
+
 .DS_Store
