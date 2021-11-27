@@ -1,4 +1,5 @@
 import numpy as np
+from pandas.io.formats import style
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -206,8 +207,30 @@ app.layout = html.Div([
                 ]),
 
         # Pestaña de resultados del modelo y app
-        dcc.Tab(label='Modelo', style=tab_style,
-                selected_style=tab_selected_style, children=[])
+        dcc.Tab(
+            label='Modelo',
+            style=tab_style,
+            selected_style=tab_selected_style,
+            children=[
+                dcc.Tabs(
+                    children=[
+                        dcc.Tab(
+                            label='Resultados',
+                            style=tab_style,
+                            selected_style=tab_selected_style,
+                            children=[]
+                        ),
+                        dcc.Tab(
+                            label='App',
+                            style=tab_style,
+                            selected_style=tab_selected_style,
+                            children=[]
+                        )
+                    ],
+                    vertical=True
+                )
+            ]
+        )
     ])
 ])
 
