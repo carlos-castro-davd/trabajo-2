@@ -64,15 +64,6 @@ dropdown_style = {
     'padding-left': 80,
     'width': 500
 }
-graph_2_style = {
-    'width': '50%',
-    'height': 720
-}
-graph_3_style = {
-    'width': '50%',
-    'height': 720,
-    'aling': 'right'
-}
 colorines = ["aliceblue", "antiquewhite", "aqua", "beige", "bisque", "black", "blueviolet", "cornsilk", "darkkhaki", "darkgrey", "darkgreen",
              "firebrick", "gainsboro", "ivory", "crimson", "darkslategray", "indigo", "mediumaquamarine", "olivedrab", "peachpuff", "mediumspringgreen"]
 
@@ -103,55 +94,71 @@ app.layout = html.Div([
                     # Aquí empiezan los plots del exploratorio de datos:
 
                     # distribucion del precio
-                    html.Br(),
-                    html.P('Distribución del precio', style=style_texto),
-                    dcc.Dropdown(
-                        id='my-dropdown',
-                        value='RC',
-                        style=dropdown_style,
-                        options=[
-                            {'label': 'Rango Completo', 'value': 'RC'},
-                            {'label': 'Rango (0,300)', 'value': 'R300'}
-                        ],
-                        searchable=False
-                    ),
-                    dcc.Graph(
-                        id='my-graph'
-                    ),
-                    dcc.Graph(
-                        figure=go.Figure(
-                            data=[
-                                go.Bar(
-                                    x=ordered_values,
-                                    y=ordered_keys,
-                                    opacity=0.6,
-                                    orientation='h',
-                                    marker_color='firebrick')
+                    html.Div([
+                        html.Br(),
+                        html.P('Distribución del precio', style=style_texto),
+                        dcc.Dropdown(
+                            id='my-dropdown',
+                            value='RC',
+                            style=dropdown_style,
+                            options=[
+                                {'label': 'Rango Completo', 'value': 'RC'},
+                                {'label': 'Rango (0,300)', 'value': 'R300'}
                             ],
-                            layout=go.Layout(
-                                xaxis_title='Número de publicaciones',
-                                yaxis_title='Barrio'
-                            )
+                            searchable=False
                         ),
-                        id='graph-2',
-                        style=graph_2_style
-                    ),
-                    dcc.Graph(
-                        figure=go.Figure(
-                            data=[
-                                go.Bar(
-                                    x=list(median_neigh.keys()),
-                                    y=list(median_neigh.values()),
-                                    name="Median price per neighbourhood",
-                                    marker_color=colorines
-                                )
-                            ],
-                            layout=go.Layout(
-                                xaxis_title='Barrio',
-                                yaxis_title='Precio Medio por noche'
+                        dcc.Graph(
+                            id='my-graph'
+                        ),
+                    ]),
+
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                figure=go.Figure(
+                                    data=[
+                                        go.Bar(
+                                            x=ordered_values,
+                                            y=ordered_keys,
+                                            opacity=0.6,
+                                            orientation='h',
+                                            marker_color='firebrick')
+                                    ],
+                                    layout=go.Layout(
+                                        xaxis_title='Número de publicaciones',
+                                        yaxis_title='Barrio'
+                                    )
+                                ),
+                                id='graph-2',
+                                style={'height': 720}
                             ),
-                        ),
-                        style=graph_3_style
+                        ],
+                        style={'width': '50%',
+                               'display': 'inline-block', 'height': 720}
+                    ),
+
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                figure=go.Figure(
+                                    data=[
+                                        go.Bar(
+                                            x=list(median_neigh.keys()),
+                                            y=list(median_neigh.values()),
+                                            opacity=0.6,
+                                            name="Median price per neighbourhood",
+                                            marker_color=colorines
+                                        )
+                                    ],
+                                    layout=go.Layout(
+                                        xaxis_title='Barrio',
+                                        yaxis_title='Precio Medio por noche'
+                                    ),
+                                ),
+                                style={'height': 720}
+                            )
+                        ],
+                        style={'width': '50%', 'display': 'inline-block'}
                     )
                 ]),
         dcc.Tab(label='Modelo', style=tab_style,
