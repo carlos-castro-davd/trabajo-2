@@ -1,9 +1,11 @@
 import numpy as np
 import plotly.graph_objects as go
+import plotly.express as px
 
 import dash
-import dash_core_components as dcc
+import dash_daq as daq
 from dash import html
+from dash import dcc
 
 import pandas as pd
 
@@ -13,12 +15,12 @@ from dash.exceptions import PreventUpdate
 # --------------------------------------------------------------------
 # Datos
 
-#df_calendar = pd.read_csv("/Users/diegoma/kaggle/calendar.csv")
+# df_calendar = pd.read_csv("/Users/diegoma/kaggle/calendar.csv")
 df_listings = pd.read_csv("/Users/diegoma/kaggle/listings.csv")
 df_neighbourhoods = pd.read_csv("/Users/diegoma/kaggle/neighbourhoods.csv")
-#df_reviews = pd.read_csv("/Users/diegoma/kaggle/reviews.csv")
-#df_reviews_det = pd.read_csv("/Users/diegoma/kaggle/reviews_detailed.csv")
-#df_listings_det = pd.read_csv("/Users/diegoma/kaggle/listings_detailed.csv")
+# df_reviews = pd.read_csv("/Users/diegoma/kaggle/reviews.csv")
+# df_reviews_det = pd.read_csv("/Users/diegoma/kaggle/reviews_detailed.csv")
+# df_listings_det = pd.read_csv("/Users/diegoma/kaggle/listings_detailed.csv")
 
 
 # --------------------------------------------------------------------
@@ -59,6 +61,10 @@ style_texto = {
     'font-family': 'verdana',
     'margin-left': 80
 }
+style_texto_2 = {
+    'font-family': 'verdana',
+    'size': 9
+}
 dropdown_style = {
     'font-family': 'verdana',
     'padding-left': 80,
@@ -88,6 +94,8 @@ app.layout = html.Div([
     html.Br(),
 
     dcc.Tabs([
+
+        # Pestaña de Análisis Exploratorio
         dcc.Tab(label='Análisis Exploratorio', style=tab_style,
                 selected_style=tab_selected_style, children=[
 
@@ -159,8 +167,45 @@ app.layout = html.Div([
                             )
                         ],
                         style={'width': '50%', 'display': 'inline-block'}
+                    ),
+
+                    # mapa múltiple
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                id='my-map'
+                            ),
+                        ],
+                        style={'width': '70%', 'display': 'inline-block'}
+                    ),
+                    # selector combinado del mapa múltiple
+                    html.Div(
+                        children=[
+                            daq.ToggleSwitch(
+                                id='toggle-switch-mapa',
+                                value=False,
+                                label={'label': 'Show offer density',
+                                       'style': style_texto_2}
+                            ),
+                            html.Br(),
+                            dcc.RangeSlider(
+                                id='range-slider-precio',
+                                min=0,
+                                max=10000,
+                                value=[0, 10000],
+                                allowCross=False,
+                                tooltip={"placement": "bottom",
+                                         "always_visible": True}
+                            )
+                        ],
+                        style={'padding-left': '4%', 'width': '62%',
+                               'display': 'inline-block'}
                     )
+
+
                 ]),
+
+        # Pestaña de resultados del modelo y app
         dcc.Tab(label='Modelo', style=tab_style,
                 selected_style=tab_selected_style, children=[])
     ])
@@ -195,6 +240,52 @@ def update_graph(v):
             barmode="overlay"
         )
     )
+
+    return fig
+
+
+@app.callback(
+    Output(component_id='my-map', component_property='figure'),
+    Input(component_id='toggle-switch-mapa', component_property='value'),
+    State(component_id='range-slider-precio', component_property='value')
+)
+def update_map(toogle, range):
+
+    # nos quedamos con el dataframe que queremos
+    valor_ini = range[0]
+    print(valor_ini)
+    valor_fin = range[1]
+    print(valor_fin)
+    df_tool = df_listings[df_listings['price'].between(valor_ini, valor_fin)]
+
+    if(toogle == False):
+        fig = px.density_mapbox(
+            data_frame=df_tool,
+            lat=df_tool['latitude'],
+            lon=df_tool['longitude'],
+            z=df_tool['price'],
+            radius=15,
+            center=dict(lat=40.43, lon=-3.68),
+            zoom=11.5,
+            mapbox_style="carto-positron",
+            labels={"price": "Price", "latitude": "Latitude",
+                    "longitude": "Longitude", "neighbourhood": "Neighbourhood"},
+            hover_data=["price", "latitude", "longitude",
+                        df_tool['neighbourhood']],
+            height=800
+        )
+    elif(toogle == True):
+        fig = go.Figure()
+        fig = px.scatter_mapbox(
+            data_frame=df_tool,
+            lat=df_tool['latitude'],
+            lon=df_tool['longitude'],
+            mapbox_style='carto-positron',
+            color=df_tool['neighbourhood_group'],
+            center=dict(lat=40.43, lon=-3.68),
+            zoom=11.5,
+            height=800
+        )
 
     return fig
 
