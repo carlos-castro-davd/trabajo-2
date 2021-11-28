@@ -1,4 +1,5 @@
 import numpy as np
+from pandas.io.formats import style
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -49,6 +50,10 @@ for i in range(count_neigh):
     median_neigh[unique_neigh[i]] = round(
         df_listings[df_listings["neighbourhood_group"] == unique_neigh[i]]["price"].median(), 3)
 
+level_count = pd.DataFrame(df_listings["room_type"].value_counts()).reset_index(
+).rename(columns={"index": "room_type", "room_type": "count"})
+level_count = level_count.sort_values("room_type").reset_index(drop=True)
+
 # --------------------------------------------------------------------
 # Style variables
 tab_style = {
@@ -59,7 +64,8 @@ tab_selected_style = {
 }
 style_texto = {
     'font-family': 'verdana',
-    'margin-left': 80
+    'margin-left': 80,
+    'margin-right': 80
 }
 style_texto_2 = {
     'font-family': 'verdana',
@@ -100,6 +106,8 @@ app.layout = html.Div([
                 selected_style=tab_selected_style, children=[
 
                     # Aquí empiezan los plots del exploratorio de datos:
+                    html.Br(),
+                    html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
 
                     # distribucion del precio
                     html.Div([
@@ -119,6 +127,9 @@ app.layout = html.Div([
                             id='my-graph'
                         ),
                     ]),
+
+                    html.Br(),
+                    html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
 
                     html.Div(
                         children=[
@@ -169,6 +180,9 @@ app.layout = html.Div([
                         style={'width': '50%', 'display': 'inline-block'}
                     ),
 
+                    html.Br(),
+                    html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
+
                     # mapa múltiple
                     html.Div(
                         children=[
@@ -200,14 +214,86 @@ app.layout = html.Div([
                         ],
                         style={'padding-left': '4%', 'width': '62%',
                                'display': 'inline-block'}
+                    ),
+
+                    html.Br(),
+                    html.Br(),
+                    html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
+
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                id='pie-chart',
+                                figure=px.pie(
+                                    level_count,
+                                    values="count",
+                                    names="room_type",
+                                    color="room_type",
+                                    color_discrete_map={
+                                        "Private room": "lightblue",
+                                        "Entire home/apt": "mediumseagreen",
+                                        "Shared room": "gold",
+                                        "Hotel room": "darkorange",
+                                    }
+                                )
+                            )
+                        ],
+                        style={
+                            'padding-left': '4%', 'width': '46%',
+                            'display': 'inline-block'}
+                    ),
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                id='box-plot',
+                                figure=go.Figure(
+                                    data=[
+                                        go.Box(
+                                            y=df_listings[df_listings["neighbourhood_group"]
+                                                          == "San Blas - Canillejas"]["price"],
+                                            marker_color="steelblue",
+                                            name="Precio",
+                                            boxmean=True
+                                        )
+                                    ],
+                                    layout=go.Layout(
+                                        yaxis_title="Precio",
+                                        xaxis_title="Saludos"
+                                    )
+                                )
+                            )
+                        ],
+                        style={
+                            'padding-left': '6%', 'width': '44%',
+                            'display': 'inline-block'}
                     )
-
-
                 ]),
 
         # Pestaña de resultados del modelo y app
-        dcc.Tab(label='Modelo', style=tab_style,
-                selected_style=tab_selected_style, children=[])
+        dcc.Tab(
+            label='Modelo',
+            style=tab_style,
+            selected_style=tab_selected_style,
+            children=[
+                dcc.Tabs(
+                    children=[
+                        dcc.Tab(
+                            label='Resultados',
+                            style=tab_style,
+                            selected_style=tab_selected_style,
+                            children=[]
+                        ),
+                        dcc.Tab(
+                            label='App',
+                            style=tab_style,
+                            selected_style=tab_selected_style,
+                            children=[]
+                        )
+                    ],
+                    vertical=True
+                )
+            ]
+        )
     ])
 ])
 
