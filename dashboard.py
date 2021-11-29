@@ -130,7 +130,7 @@ app.layout = html.Div([
         "border-style": "outset",
         'border-color': "lightgrey",
         "background-color": "lightgrey",
-        "height" : "60px"
+        "height": "60px"
     }),
     html.H3("por Diego Martinez de Aspe Martín y Jaime Reglero García", style={
         'text-align': 'center',
@@ -300,23 +300,23 @@ app.layout = html.Div([
                             ),
                             html.Br(),
                             dcc.Graph(
-                                id= "puntuacion_precio",
-                                figure = px.scatter(
-                                        x = df_modelo['puntuacion'][df_modelo["price"]<1000],
-                                        y = df_modelo["price"][df_modelo["price"]<1000],
+                                id="puntuacion_precio",
+                                figure=px.scatter(
+                                    x=df_modelo['puntuacion'][df_modelo["price"] < 1000],
+                                    y=df_modelo["price"][df_modelo["price"] < 1000],
                                 )
                             ),
                             html.P("Otra de las grandes variables a analizar será la puntuacion de las reviews. Como es de esperar, a mayor puntuacion media se presupone que existirá una mayor demanda para dicha publicación. Esto lo podemos comprobar en el gráfico, existiendo una tendencia ascendente a medida que aumenta la puntuacion media de la publicacion.", style=style_texto),
                             html.Div(
-                                children =[
+                                children=[
                                     dcc.Graph(
-                                        id= "box_superhost",
-                                        figure = go.Figure(
+                                        id="box_superhost",
+                                        figure=go.Figure(
                                             data=[
                                                 go.Box(
                                                     y=df_modelo[(df_modelo["host_is_superhost"]
                                                                 == True) & (df_modelo["price"]
-                                                                < 500)] ["price"],
+                                                                < 500)]["price"],
                                                     marker_color="steelblue",
                                                     name="Precio",
                                                     boxmean=True
@@ -324,18 +324,18 @@ app.layout = html.Div([
                                             ],
                                             layout=go.Layout(
                                                 yaxis_title="Precio",
-                                                xaxis_title="Distribución de precios para superhosts" 
+                                                xaxis_title="Distribución de precios para superhosts"
                                             )
                                         )
                                     ),
                                     dcc.Graph(
-                                        id= "box_superhost_false",
-                                        figure = go.Figure(
+                                        id="box_superhost_false",
+                                        figure=go.Figure(
                                             data=[
                                                 go.Box(
                                                     y=df_modelo[(df_modelo["host_is_superhost"]
                                                                 == False) & (df_modelo["price"]
-                                                                < 500)] ["price"],
+                                                                < 500)]["price"],
                                                     marker_color="steelblue",
                                                     name="Precio",
                                                     boxmean=True
@@ -343,12 +343,12 @@ app.layout = html.Div([
                                             ],
                                             layout=go.Layout(
                                                 yaxis_title="Precio",
-                                                xaxis_title="Distribución de precios para no superhosts" 
+                                                xaxis_title="Distribución de precios para no superhosts"
                                             )
                                         )
                                     ),
                                 ],
-                                style = {
+                                style={
                                     'text-align': 'center'
                                 }
                             )
@@ -597,17 +597,17 @@ app.layout = html.Div([
                         html.Button('Enviar',
                                     id='submit-button',
                                     n_clicks=0,
-                                    style ={
+                                    style={
                                         "border-radius": "15px",
                                         "cursor": "pointer",
                                         "padding": "15px 25px",
                                         "text-family": "verdana"
                                     }
-                        ),
+                                    ),
                         html.Br(),
                         html.P(id='app-text-output',
                                style={
-                                   
+
                                },
                                children='Texto Previo'
                                )
