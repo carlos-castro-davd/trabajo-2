@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from pandas.io.formats import style
 import plotly.graph_objects as go
 import plotly.express as px
@@ -7,9 +8,9 @@ import dash
 import dash_daq as daq
 from dash import html
 from dash import dcc
-
-import pandas as pd
-
+import joblib
+from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
@@ -17,12 +18,22 @@ from dash.exceptions import PreventUpdate
 # Datos
 
 # df_calendar = pd.read_csv("/Users/diegoma/kaggle/calendar.csv")
-df_listings = pd.read_csv("/Users/diegoma/kaggle/listings.csv")
-df_neighbourhoods = pd.read_csv("/Users/diegoma/kaggle/neighbourhoods.csv")
+#df_listings = pd.read_csv("/Users/diegoma/kaggle/listings.csv")
+#df_neighbourhoods = pd.read_csv("/Users/diegoma/kaggle/neighbourhoods.csv")
 # df_reviews = pd.read_csv("/Users/diegoma/kaggle/reviews.csv")
 # df_reviews_det = pd.read_csv("/Users/diegoma/kaggle/reviews_detailed.csv")
 # df_listings_det = pd.read_csv("/Users/diegoma/kaggle/listings_detailed.csv")
 
+
+#Jaime
+df_listings = pd.read_csv("/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/listings.csv")
+df_neighbourhoods = pd.read_csv("/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/neighbourhoods.csv")
+modelo = joblib.load("/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/DataFinal/modelo_RF.pkl")
+
+tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
+model_nlp = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
+multilang_classifier = pipeline("sentiment-analysis", 
+                                model=model_nlp, tokenizer = tokenizer)
 
 # --------------------------------------------------------------------
 # Dashboard Ini
@@ -33,6 +44,16 @@ app = dash.Dash(__name__)
 count_neigh = len(df_neighbourhoods["neighbourhood_group"].unique())
 unique_neigh = df_neighbourhoods["neighbourhood_group"].unique()
 neigh_count = {}
+
+options_neigh = []
+for i in unique_neigh:
+    options_neigh.append({'value': i, 'label': i})
+
+unique_room = df_listings["room_type"].unique()
+options_room = []
+for i in unique_room:
+    options_room.append({'value': i, 'label': i})
+
 
 for i in range(count_neigh):
     neigh_count[unique_neigh[i]] = df_listings["neighbourhood_group"][df_listings["neighbourhood_group"]
@@ -275,23 +296,241 @@ app.layout = html.Div([
             style=tab_style,
             selected_style=tab_selected_style,
             children=[
-                dcc.Tabs(
-                    children=[
-                        dcc.Tab(
-                            label='Resultados',
-                            style=tab_style,
-                            selected_style=tab_selected_style,
-                            children=[]
+
+                html.H3( 
+                    children = [
+                        "Prediccion de precio"
+                    ],
+                    id = "subtituloModelo",
+                    style ={
+                        "text-align": "center",
+                        "font-family": "verdana",
+                        "display": "block"
+                    }
+                ),
+                html.P(
+                    "A continuacion, se ofrece la posibilidad de predecir el precio de una publicacion de Airbnb ficticia, introduciendo los datos pertinentes",
+                    style ={
+                        "text-align": "center",
+                        "font-family": "verdana",
+                        "display": "block"
+                    }
+                ),
+                html.Div(
+                    children = [
+                        html.Div(
+                            children=[
+                                html.H5(
+                                    "Es usted superhost:"
+                                ),
+                                html.Br(),
+                                dcc.RadioItems(
+                                    id="superhost",
+                                    options=[{'label': 'Si', 'value': 'True'},{'label':'No','value': 'False'}],
+                                    labelStyle={'display': 'inline-block'}                                
+                                ),
+                                html.Br(),
+                                html.Br(),
+                                html.Br(),
+                                html.H5(
+                                    "Escoja el barrio correspondiente: "
+                                ),
+                                html.Br(),
+                                dcc.Dropdown(
+                                    options = options_neigh,
+                                    placeholder = "Selecciona barrio",
+                                    id = "dropdown_neighb",
+                                    style = {
+                                        "display": "block",
+                                        "width": "300px",
+                                        "margin-left": "10px"
+                                    }
+                                ),
+                            ],
+                            style = {
+                            "width": "300px",
+                            "height": "200px",
+                            "display": "inline-block",
+                            "margin": "30px"
+                            }
                         ),
-                        dcc.Tab(
-                            label='App',
-                            style=tab_style,
-                            selected_style=tab_selected_style,
-                            children=[]
+                        html.Div(
+                            children=[
+                                html.H5(
+                                    "Escoja el tipo de habitación: "
+                                ),
+                                html.Br(),
+                                dcc.Dropdown(
+                                    options = options_room,
+                                    placeholder = "Selecciona el tipo de habitación",
+                                    id = "dropdown_room",
+                                    style = {
+                                        "display": "block",
+                                        "width": "300px",
+                                        "margin-left": "10px"
+                                    }
+                                ),
+                                html.Br(),
+                                html.Br(),
+                                html.Br(),
+                                html.H5(
+                                    "Introduzca el número de personas que acomoda: "
+                                ),
+                                html.Br(),
+                                dcc.Input(
+                                    id="AccomInput",
+                                    type="number",
+                                    min = 1,
+                                    max = 20
+                                )
+                            ],
+                            style = {
+                            "width": "300px",
+                            "height": "200px",
+                            "display": "inline-block",
+                            "margin": "30px"
+                            }
+                        ),
+                        html.Div(
+                            children=[
+                                html.H5(
+                                    "Introduzca el número de dormitorios: "
+                                ),
+                                html.Br(),
+                                dcc.Input(
+                                    id="BedroomsInput",
+                                    type="number",
+                                    min = 1,
+                                    max = 20
+                                ),
+                                html.Br(),
+                                html.Br(),
+                                html.Br(),
+                                html.H5(
+                                    "Introduzca el número de baños: "
+                                ),
+                                html.Br(),
+                                dcc.Input(
+                                    id="BathInput",
+                                    type="number",
+                                    min = 1,
+                                    max = 20
+                                ),
+                            ],
+                            style = {
+                            "width": "300px",
+                            "height": "200px",
+                            "display": "inline-block",
+                            "margin": "30px"
+                            }  
+                        ),
+                        html.Div(
+                            children=[
+                                html.H5(
+                                    "Introduzca el número de noches minimas: "
+                                ),
+                                html.Br(),
+                                dcc.Input(
+                                    id="MinNights",
+                                    type="number",
+                                    min = 0,
+                                    max = 30
+                                ),
+                                html.Br(),
+                                html.Br(),
+                                html.Br(),
+                                html.H5(
+                                    "Introduzca el número de noches disponibles en un año: "
+                                ),
+                                html.Br(),
+                                dcc.Input(
+                                    id="Availab365",
+                                    type="number",
+                                    min = 0,
+                                    max = 365
+                                ),
+                            ],
+                            style = {
+                            "width": "300px",
+                            "height": "200px",
+                            "display": "inline-block",
+                            "margin": "30px"
+                            }  
+                        ),
+                        html.Div(
+                            children=[
+                                html.H5(
+                                    "Introduzca el número de reviews: "
+                                ),
+                                html.Br(),
+                                dcc.Input(
+                                    id="numberReviews",
+                                    type="number",
+                                    min = 1,
+                                    max = 800
+                                ),
+                                html.Br(),
+                                html.Br(),
+                                html.Br(),
+                                html.H5(
+                                    "Introduzca el número de publicaciones del host: "
+                                ),
+                                html.Br(),
+                                dcc.Input(
+                                    id="numberListings",
+                                    type="number",
+                                    min = 1,
+                                    max = 300
+                                ),
+                            ],
+                            style = {
+                            "width": "300px",
+                            "height": "300px",
+                            "display": "inline-block",
+                            "margin": "30px"
+                            }  
+                        ),
+                        html.Div(
+                            children=[
+                                html.H5(
+                                    "Introduzca una review: "
+                                ),
+                                html.Br(),
+                                dcc.Textarea(
+                                    id="review",
+                                    placeholder="Introduzca review",
+                                    value = "",
+                                    style={'width': '500px', 'height': "100px", "margin": "auto"}
+                                )
+                            ],
+                            style = {
+                            "width": "300px",
+                            "height": "300px",
+                            "display": "inline-block",
+                            "margin": "30px"
+                            }  
                         )
                     ],
-                    vertical=True
-                )
+                    style={
+                        "text-align": "center",
+                        "border-style": "outset",
+                        "border-color": "snow",
+                        "border-width": "5px",
+                        "background-color": "snow ",
+                        'font-family': 'verdana',
+                        "margin" : "20px"
+                        
+                    }
+                ),
+                html.Div(
+                    children=[
+                        html.Br(),
+                        html.Button('Enviar',id='Submit_button',n_clicks=0)
+                    ],
+                    style={
+                        "text-align": "center"
+                    }
+                ),
             ]
         )
     ])
@@ -374,6 +613,35 @@ def update_map(toogle, range):
         )
 
     return fig
+
+##### A la funcion esta le tiene que entrar lo que sale del dash del modelo; Devuelve un dataframe, haces modelo.predict(el dataframe)[0] y es el precio
+@app.callback(
+    
+)
+def getPredDataFrame(superhost, accomodates, beds, bath, nights, availab, reviews, listings, review, neigh, room):
+    
+    puntuacion = float(multilang_classifier(review)[0]['label'].split(' ')[0])
+    
+    dat = {
+        'host_is_superhost': superhost, 'latitude': 40.42051, 'longitude': -3.69506, 'accommodates': accomodates, 'bathrooms': bath, 'bedrooms': beds,
+        'minimum_nights': nights, 'availability_365': availab, 'number_of_reviews': reviews, 'calculated_host_listings_count': listings, 'puntuacion': puntuacion,
+        'neighbourhood_group_cleansed_Arganzuela': 0, 'neighbourhood_group_cleansed_Barajas': 0, 'neighbourhood_group_cleansed_Carabanchel': 0,
+        'neighbourhood_group_cleansed_Centro': 0, 'neighbourhood_group_cleansed_Chamartín': 0, 'neighbourhood_group_cleansed_Chamberí': 0, 
+        'neighbourhood_group_cleansed_Ciudad Lineal': 0, 'neighbourhood_group_cleansed_Fuencarral - El Pardo': 0, 'neighbourhood_group_cleansed_Hortaleza': 0, 'neighbourhood_group_cleansed_Latina': 0,
+        'neighbourhood_group_cleansed_Moncloa - Aravaca': 0, 'neighbourhood_group_cleansed_Moratalaz': 0, 'neighbourhood_group_cleansed_Puente de Vallecas': 0, 'neighbourhood_group_cleansed_Retiro': 0,
+        'neighbourhood_group_cleansed_Salamanca': 0, 'neighbourhood_group_cleansed_San Blas - Canillejas': 0, 'neighbourhood_group_cleansed_Tetuán': 0, 
+        'neighbourhood_group_cleansed_Usera': 0, 'neighbourhood_group_cleansed_Vicálvaro': 0, 'neighbourhood_group_cleansed_Villa de Vallecas': 0, 
+        'neighbourhood_group_cleansed_Villaverde': 0, 'room_type_Entire home/apt': 0, 'room_type_Hotel room': 0, 'room_type_Private room': 0, 'room_type_Shared room': 0
+    }
+
+    neigh_key = 'neighbourhood_group_cleansed_' + neigh
+    room_key = 'room_type_' + room
+    dat[neigh_key] = 1
+    dat[room_key] = 1
+
+    dataf = pd.DataFrame(data = dat, index = [0])
+    return dataf
+
 
 
 # -----------------------------------------------------------------------------------------
