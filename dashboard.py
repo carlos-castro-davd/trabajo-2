@@ -574,23 +574,12 @@ app.layout = html.Div([
 )
 def update_model(n_clicks, superhost, neighb, room, accomodates, beds, bath, nights, availab, reviews, listings, review):
     if(n_clicks > 0):
+        print(bool(superhost == 'True'))
         dataf = getDataFrame(bool(superhost == 'True'), neighb, room, accomodates,
                              beds, bath, nights, availab, reviews, listings, review)
         prediction = modelo.predict(dataf)[0]
-        return 'El input es "{}" "{}" "{}" "{}" "{}"     "{}" "{}" "{}" "{}" "{}"     "{}" "{}" Y la prediccion es: "{}" '.format(
-            n_clicks,
-            superhost,
-            neighb,
-            room,
-            accomodates,
-            beds,
-            bath,
-            nights,
-            availab,
-            reviews,     # van 10
-            listings,
-            review,
-            prediction
+        return 'El precio esperado es de "{}" '.format(
+            int(prediction)
         )
     else:
         return ''
