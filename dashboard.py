@@ -17,23 +17,26 @@ from dash.exceptions import PreventUpdate
 # --------------------------------------------------------------------
 # Datos
 
-df_calendar = pd.read_csv("/Users/diegoma/kaggle/calendar.csv")
-df_listings = pd.read_csv("/Users/diegoma/kaggle/listings.csv")
-df_neighbourhoods = pd.read_csv("/Users/diegoma/kaggle/neighbourhoods.csv")
-df_reviews = pd.read_csv("/Users/diegoma/kaggle/reviews.csv")
-df_reviews_det = pd.read_csv("/Users/diegoma/kaggle/reviews_detailed.csv")
-df_listings_det = pd.read_csv("/Users/diegoma/kaggle/listings_detailed.csv")
+#df_calendar = pd.read_csv("/Users/diegoma/kaggle/calendar.csv")
+#df_listings = pd.read_csv("/Users/diegoma/kaggle/listings.csv")
+#df_neighbourhoods = pd.read_csv("/Users/diegoma/kaggle/neighbourhoods.csv")
+#df_reviews = pd.read_csv("/Users/diegoma/kaggle/reviews.csv")
+#df_reviews_det = pd.read_csv("/Users/diegoma/kaggle/reviews_detailed.csv")
+#df_listings_det = pd.read_csv("/Users/diegoma/kaggle/listings_detailed.csv")
 
 
 # Jaime
-# df_listings = pd.read_csv(
-#    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/listings.csv")
-# df_neighbourhoods = pd.read_csv(
-#    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/neighbourhoods.csv")
-# modelo = joblib.load(
-#    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/DataFinal/modelo_RF.pkl")
+df_listings = pd.read_csv(
+    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/listings.csv")
+df_neighbourhoods = pd.read_csv(
+    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/neighbourhoods.csv")
+df_modelo = pd.read_csv(
+    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/DataFinal/datos_modelo.csv")
 
-modelo = joblib.load("/Users/diegoma/modelo_RF.pkl")
+modelo = joblib.load(
+    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/DataFinal/modelo_RF.pkl")
+
+#modelo = joblib.load("/Users/diegoma/modelo_RF.pkl")
 tokenizer = AutoTokenizer.from_pretrained(
     "nlptown/bert-base-multilingual-uncased-sentiment")
 model_nlp = AutoModelForSequenceClassification.from_pretrained(
@@ -84,7 +87,8 @@ level_count = level_count.sort_values("room_type").reset_index(drop=True)
 # --------------------------------------------------------------------
 # Style variables
 tab_style = {
-    'font-family': 'verdana'
+    'font-family': 'verdana',
+    'background-color': 'snow'
 }
 tab_selected_style = {
     'font-family': 'verdana'
@@ -122,16 +126,15 @@ app.layout = html.Div([
 
     html.H1("Dashboard Airbnb", style={
         'text-align': 'center',
-        'font-family': 'verdana'
-    }),
-    html.H3("por Diego Martinez de Aspe Martín", style={
-        'text-align': 'center',
-        'font-family': 'verdana'
-    }),
-    html.H6("y la colaboracion de Jaime R.", style={
-        'text-align': 'center',
         'font-family': 'verdana',
-        'color': 'gray'
+        "border-style": "outset",
+        'border-color': "lightgrey",
+        "background-color": "lightgrey",
+        "height" : "60px"
+    }),
+    html.H3("por Diego Martinez de Aspe Martín y Jaime Reglero García", style={
+        'text-align': 'center',
+        'font-family': 'verdana'
     }),
 
     html.Br(),
@@ -290,10 +293,67 @@ app.layout = html.Div([
                             ),
                             dcc.Graph(
                                 id='box-plot_room'
+                            ),
+                            html.P("Otro factor importante a tener en cuenta será el tipo de habitación que se ofrezca, pudiendo ser una habitación privada, un apartamento, habitación compartida, o habitación de hotel. En este caso, la mayoría de publicaciones corresponden a habitaciones privadas o apartamentos enteros. Además, podemos comprobar que en los casos de las habitaciones de hotel o apartamentos privados, el precio tiende a ser mucho mayor, como es de esperar.", style=style_texto),
+                            html.H4(
+                                "Análisis de las reviews: ", style=style_texto
+                            ),
+                            html.Br(),
+                            dcc.Graph(
+                                id= "puntuacion_precio",
+                                figure = px.scatter(
+                                        x = df_modelo['puntuacion'][df_modelo["price"]<1000],
+                                        y = df_modelo["price"][df_modelo["price"]<1000],
+                                )
+                            ),
+                            html.P("Otra de las grandes variables a analizar será la puntuacion de las reviews. Como es de esperar, a mayor puntuacion media se presupone que existirá una mayor demanda para dicha publicación. Esto lo podemos comprobar en el gráfico, existiendo una tendencia ascendente a medida que aumenta la puntuacion media de la publicacion.", style=style_texto),
+                            html.Div(
+                                children =[
+                                    dcc.Graph(
+                                        id= "box_superhost",
+                                        figure = go.Figure(
+                                            data=[
+                                                go.Box(
+                                                    y=df_modelo[(df_modelo["host_is_superhost"]
+                                                                == True) & (df_modelo["price"]
+                                                                < 500)] ["price"],
+                                                    marker_color="steelblue",
+                                                    name="Precio",
+                                                    boxmean=True
+                                                )
+                                            ],
+                                            layout=go.Layout(
+                                                yaxis_title="Precio",
+                                                xaxis_title="Distribución de precios para superhosts" 
+                                            )
+                                        )
+                                    ),
+                                    dcc.Graph(
+                                        id= "box_superhost_false",
+                                        figure = go.Figure(
+                                            data=[
+                                                go.Box(
+                                                    y=df_modelo[(df_modelo["host_is_superhost"]
+                                                                == False) & (df_modelo["price"]
+                                                                < 500)] ["price"],
+                                                    marker_color="steelblue",
+                                                    name="Precio",
+                                                    boxmean=True
+                                                )
+                                            ],
+                                            layout=go.Layout(
+                                                yaxis_title="Precio",
+                                                xaxis_title="Distribución de precios para no superhosts" 
+                                            )
+                                        )
+                                    ),
+                                ],
+                                style = {
+                                    'text-align': 'center'
+                                }
                             )
                         ]
                     ),
-                    html.P("Otro factor importante a tener en cuenta será el tipo de habitación que se ofrezca, pudiendo ser una habitación privada, un apartamento, habitación compartida, o habitación de hotel. En este caso, la mayoría de publicaciones corresponden a habitaciones privadas o apartamentos enteros. Además, podemos comprobar que en los casos de las habitaciones de hotel o apartamentos privados, el precio tiende a ser mucho mayor, como es de esperar.", style=style_texto),
                 ]),
 
         # Pestaña de resultados del modelo y app
@@ -536,11 +596,19 @@ app.layout = html.Div([
                         html.Br(),
                         html.Button('Enviar',
                                     id='submit-button',
-                                    n_clicks=0
-                                    ),
+                                    n_clicks=0,
+                                    style ={
+                                        "border-radius": "15px",
+                                        "cursor": "pointer",
+                                        "padding": "15px 25px",
+                                        "text-family": "verdana"
+                                    }
+                        ),
                         html.Br(),
                         html.P(id='app-text-output',
-                               style=style_texto,
+                               style={
+                                   
+                               },
                                children='Texto Previo'
                                )
                     ],
@@ -666,8 +734,8 @@ def update_boxplot(v):
     figure = go.Figure(
         data=[
             go.Box(
-                y=df_listings[df_listings["room_type"]
-                              == v]["price"],
+                y=df_listings[(df_listings["room_type"]
+                              == v) & (df_listings["price"] < 1000)]["price"],
                 marker_color="steelblue",
                 name="Precio",
                 boxmean=True
