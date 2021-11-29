@@ -18,25 +18,26 @@ from dash.exceptions import PreventUpdate
 # Datos
 
 #df_calendar = pd.read_csv("/Users/diegoma/kaggle/calendar.csv")
-#df_listings = pd.read_csv("/Users/diegoma/kaggle/listings.csv")
-#df_neighbourhoods = pd.read_csv("/Users/diegoma/kaggle/neighbourhoods.csv")
+df_listings = pd.read_csv("/Users/diegoma/kaggle/listings.csv")
+df_neighbourhoods = pd.read_csv("/Users/diegoma/kaggle/neighbourhoods.csv")
 #df_reviews = pd.read_csv("/Users/diegoma/kaggle/reviews.csv")
 #df_reviews_det = pd.read_csv("/Users/diegoma/kaggle/reviews_detailed.csv")
 #df_listings_det = pd.read_csv("/Users/diegoma/kaggle/listings_detailed.csv")
 
+modelo = joblib.load("/Users/diegoma/modelo_RF.pkl")
+df_modelo = pd.read_csv("/Users/diegoma/kaggle/datos_modelo.csv")
 
 # Jaime
-df_listings = pd.read_csv(
-    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/listings.csv")
-df_neighbourhoods = pd.read_csv(
-    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/neighbourhoods.csv")
-df_modelo = pd.read_csv(
-    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/DataFinal/datos_modelo.csv")
+# df_listings = pd.read_csv(
+#    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/listings.csv")
+# df_neighbourhoods = pd.read_csv(
+#    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/neighbourhoods.csv")
+# df_modelo = pd.read_csv(
+#    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/DataFinal/datos_modelo.csv")
 
-modelo = joblib.load(
-    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/DataFinal/modelo_RF.pkl")
+# modelo = joblib.load(
+#    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/DataFinal/modelo_RF.pkl")
 
-#modelo = joblib.load("/Users/diegoma/modelo_RF.pkl")
 tokenizer = AutoTokenizer.from_pretrained(
     "nlptown/bert-base-multilingual-uncased-sentiment")
 model_nlp = AutoModelForSequenceClassification.from_pretrained(
@@ -124,14 +125,17 @@ colorines = ["aliceblue", "antiquewhite", "aqua", "beige", "bisque", "black", "b
 # App layout
 app.layout = html.Div([
 
-    html.H1("Dashboard Airbnb", style={
-        'text-align': 'center',
-        'font-family': 'verdana',
-        "border-style": "outset",
-        'border-color': "lightgrey",
-        "background-color": "lightgrey",
-        "height": "60px"
-    }),
+    html.Br(),
+    html.H1(
+        children="Dashboard Airbnb",
+        style={
+            'text-align': 'center',
+            'font-family': 'verdana',
+            "border-style": "outset",
+            'height': 60,
+            'padding-up': 10
+        }
+    ),
     html.H3("por Diego Martinez de Aspe Martín y Jaime Reglero García", style={
         'text-align': 'center',
         'font-family': 'verdana'
@@ -327,7 +331,16 @@ app.layout = html.Div([
                                                 xaxis_title="Distribución de precios para superhosts"
                                             )
                                         )
-                                    ),
+                                    )
+                                ],
+                                style={
+                                    'text-align': 'center',
+                                    'width': '49%',
+                                    'display': 'inline-block'
+                                }
+                            ),
+                            html.Div(
+                                children=[
                                     dcc.Graph(
                                         id="box_superhost_false",
                                         figure=go.Figure(
@@ -349,7 +362,9 @@ app.layout = html.Div([
                                     ),
                                 ],
                                 style={
-                                    'text-align': 'center'
+                                    'text-align': 'center',
+                                    'width': '49%',
+                                    'display': 'inline-block'
                                 }
                             )
                         ]
@@ -601,7 +616,7 @@ app.layout = html.Div([
                                         "border-radius": "15px",
                                         "cursor": "pointer",
                                         "padding": "15px 25px",
-                                        "text-family": "verdana"
+                                        "font-family": "verdana"
                                     }
                                     ),
                         html.Br(),
