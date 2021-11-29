@@ -128,7 +128,7 @@ app.layout = html.Div([
 
                     # Aquí empiezan los plots del exploratorio de datos:
                     html.Br(),
-                    html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
+                    html.P("A lo largo de este dashboard se tratarán de desarrollar los principales factores de influencia del precio en publicaciones de Airbnb, con el objetivo de poder realizar una predicción razonable. El análisis viene de un conjunto de datos de considerable extensión y numerosas variables, desde los comentarios en la publicación hasta el número de habitaciones. Se comenzarán analizando las variables que se han considerado de mayor importancia o interés, para posteriormente proceder a la elaboración del modelo, en la cual el usuario podrá comprobar en primera persona el precio de una publicación con las carácterísticas que el usuario indique.", style=style_texto),
 
                     # distribucion del precio
                     html.Div([
@@ -150,7 +150,7 @@ app.layout = html.Div([
                     ]),
 
                     html.Br(),
-                    html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
+                    html.P("En primer lugar, analizamos la distribución del precio. Dado que el precio es la principal variable a predecir, su distribución temporal es de gran importancia. A simple vista, podemos ver que si nos fijamos en el rango completo, existe un gran numero de outliers, siendo mucho más representativa la distribución para el rango 0 - 300.", style=style_texto),
 
                     html.Div(
                         children=[
@@ -202,7 +202,7 @@ app.layout = html.Div([
                     ),
 
                     html.Br(),
-                    html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
+                    html.P("En este caso, podemos comprobar, en primer lugar, que la inmensa mayoría de publicaciones, alrededor del 45%, abarcan el distrito Centro, el gran núcleo turístico de la ciudad. Por otro lado, en cuanto al precio podemos distinguir tres categorías: en primer lugar, una primera categoría formada por Salamanca y San Blás, con un precio de alrededor de 76€. Por otro lado, una segunda categoría con precios entre 55€ y 65€, formada por barrios como Chamberí o Chamartín. Finalmente, una tercera categoría con precios entre 25€ y 40€ formada por barrios como Moratalaz o Villaverde, entre otros.", style=style_texto),
 
                     # mapa múltiple
                     html.Div(
@@ -239,7 +239,7 @@ app.layout = html.Div([
 
                     html.Br(),
                     html.Br(),
-                    html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
+                    html.P("De nuevo, podemos comprobar la influencia del barrio en el precio de la publicacion, existiendo claramente ditritos o barrios en los cuales existe una mayor demanda, y por ende un mayor precio. Claro ejemplo de ello son el barrio de Chueca, Malasaña o Barrio de las Letras. Además, podemos comprobar la densidad en cada barrio, incluso filtrando por precio. En este caso, comprobamos de nuevo que la gran mayoría de oferta reside en el distrito centro, en gran parte pos su atractivo turistico.", style=style_texto),
 
                     html.Div(
                         children=[
@@ -257,37 +257,30 @@ app.layout = html.Div([
                                         "Hotel room": "darkorange",
                                     }
                                 )
+                            ),
+                            html.H5(
+                                "Escoja el tipo de habitación: "
+                            ),
+                            html.Br(),
+                            dcc.Dropdown(
+                                options = options_room,
+                                placeholder = "Selecciona el tipo de habitación",
+                                id = "room_exploratorio",
+                                style = {
+                                    "display": "block",
+                                    "width": "300px",
+                                    "margin-left": "10px"
+                                }
+                            ),
+                            dcc.Graph(
+                                id='box-plot_room'
                             )
                         ],
                         style={
                             'padding-left': '4%', 'width': '46%',
                             'display': 'inline-block'}
                     ),
-                    html.Div(
-                        children=[
-                            dcc.Graph(
-                                id='box-plot',
-                                figure=go.Figure(
-                                    data=[
-                                        go.Box(
-                                            y=df_listings[df_listings["neighbourhood_group"]
-                                                          == "San Blas - Canillejas"]["price"],
-                                            marker_color="steelblue",
-                                            name="Precio",
-                                            boxmean=True
-                                        )
-                                    ],
-                                    layout=go.Layout(
-                                        yaxis_title="Precio",
-                                        xaxis_title="Saludos"
-                                    )
-                                )
-                            )
-                        ],
-                        style={
-                            'padding-left': '6%', 'width': '44%',
-                            'display': 'inline-block'}
-                    )
+                    html.P("Otro factor importante a tener en cuenta será el tipo de habitación que se ofrezca, pudiendo ser una habitación privada, un apartamento, habitación compartida, o habitación de hotel. En este caso, la mayoría de publicaciones corresponden a habitaciones privadas o apartamentos enteros. Además, podemos comprobar que en los casos de las habitaciones de hotel o apartamentos privados, el precio tiende a ser mucho mayor, como es de esperar.", style=style_texto),
                 ]),
 
         # Pestaña de resultados del modelo y app
@@ -614,33 +607,60 @@ def update_map(toogle, range):
 
     return fig
 
-##### A la funcion esta le tiene que entrar lo que sale del dash del modelo; Devuelve un dataframe, haces modelo.predict(el dataframe)[0] y es el precio
+
 @app.callback(
-    
+    Output(component_id='box-plot_room', component_property='figure'),
+    Input(component_id='room_exploratorio', component_property='value')
 )
-def getPredDataFrame(superhost, accomodates, beds, bath, nights, availab, reviews, listings, review, neigh, room):
-    
-    puntuacion = float(multilang_classifier(review)[0]['label'].split(' ')[0])
-    
-    dat = {
-        'host_is_superhost': superhost, 'latitude': 40.42051, 'longitude': -3.69506, 'accommodates': accomodates, 'bathrooms': bath, 'bedrooms': beds,
-        'minimum_nights': nights, 'availability_365': availab, 'number_of_reviews': reviews, 'calculated_host_listings_count': listings, 'puntuacion': puntuacion,
-        'neighbourhood_group_cleansed_Arganzuela': 0, 'neighbourhood_group_cleansed_Barajas': 0, 'neighbourhood_group_cleansed_Carabanchel': 0,
-        'neighbourhood_group_cleansed_Centro': 0, 'neighbourhood_group_cleansed_Chamartín': 0, 'neighbourhood_group_cleansed_Chamberí': 0, 
-        'neighbourhood_group_cleansed_Ciudad Lineal': 0, 'neighbourhood_group_cleansed_Fuencarral - El Pardo': 0, 'neighbourhood_group_cleansed_Hortaleza': 0, 'neighbourhood_group_cleansed_Latina': 0,
-        'neighbourhood_group_cleansed_Moncloa - Aravaca': 0, 'neighbourhood_group_cleansed_Moratalaz': 0, 'neighbourhood_group_cleansed_Puente de Vallecas': 0, 'neighbourhood_group_cleansed_Retiro': 0,
-        'neighbourhood_group_cleansed_Salamanca': 0, 'neighbourhood_group_cleansed_San Blas - Canillejas': 0, 'neighbourhood_group_cleansed_Tetuán': 0, 
-        'neighbourhood_group_cleansed_Usera': 0, 'neighbourhood_group_cleansed_Vicálvaro': 0, 'neighbourhood_group_cleansed_Villa de Vallecas': 0, 
-        'neighbourhood_group_cleansed_Villaverde': 0, 'room_type_Entire home/apt': 0, 'room_type_Hotel room': 0, 'room_type_Private room': 0, 'room_type_Shared room': 0
-    }
+def update_boxplot(v):
 
-    neigh_key = 'neighbourhood_group_cleansed_' + neigh
-    room_key = 'room_type_' + room
-    dat[neigh_key] = 1
-    dat[room_key] = 1
+    figure=go.Figure(
+        data=[
+            go.Box(
+                y=df_listings[df_listings["room_type"]
+                            == v]["price"],
+                marker_color="steelblue",
+                name="Precio",
+                boxmean=True
+            )
+        ],
+        layout=go.Layout(
+            yaxis_title="Precio",
+            xaxis_title="Distribución de precios para habitaciones de tipo " + str(v)
+        )
+    )
 
-    dataf = pd.DataFrame(data = dat, index = [0])
-    return dataf
+    return figure
+
+
+
+##### A la funcion esta le tiene que entrar lo que sale del dash del modelo; Devuelve un dataframe, haces modelo.predict(el dataframe)[0] y es el precio
+#@app.callback(
+#    
+#)
+#def getPredDataFrame(superhost, accomodates, beds, bath, nights, availab, reviews, listings, review, neigh, room):
+ #   
+ #   puntuacion = float(multilang_classifier(review)[0]['label'].split(' ')[0])
+ #   
+ #   dat = {
+ #       'host_is_superhost': superhost, 'latitude': 40.42051, 'longitude': -3.69506, 'accommodates': accomodates, 'bathrooms': bath, 'bedrooms': beds,
+ #       'minimum_nights': nights, 'availability_365': availab, 'number_of_reviews': reviews, 'calculated_host_listings_count': listings, 'puntuacion': puntuacion,
+ #       'neighbourhood_group_cleansed_Arganzuela': 0, 'neighbourhood_group_cleansed_Barajas': 0, 'neighbourhood_group_cleansed_Carabanchel': 0,
+ #       'neighbourhood_group_cleansed_Centro': 0, 'neighbourhood_group_cleansed_Chamartín': 0, 'neighbourhood_group_cleansed_Chamberí': 0, 
+ #       'neighbourhood_group_cleansed_Ciudad Lineal': 0, 'neighbourhood_group_cleansed_Fuencarral - El Pardo': 0, 'neighbourhood_group_cleansed_Hortaleza': 0, 'neighbourhood_group_cleansed_Latina': 0,
+ #       'neighbourhood_group_cleansed_Moncloa - Aravaca': 0, 'neighbourhood_group_cleansed_Moratalaz': 0, 'neighbourhood_group_cleansed_Puente de Vallecas': 0, 'neighbourhood_group_cleansed_Retiro': 0,
+ #       'neighbourhood_group_cleansed_Salamanca': 0, 'neighbourhood_group_cleansed_San Blas - Canillejas': 0, 'neighbourhood_group_cleansed_Tetuán': 0, 
+ #       'neighbourhood_group_cleansed_Usera': 0, 'neighbourhood_group_cleansed_Vicálvaro': 0, 'neighbourhood_group_cleansed_Villa de Vallecas': 0, 
+ #       'neighbourhood_group_cleansed_Villaverde': 0, 'room_type_Entire home/apt': 0, 'room_type_Hotel room': 0, 'room_type_Private room': 0, 'room_type_Shared room': 0
+  #  }
+
+   # neigh_key = 'neighbourhood_group_cleansed_' + neigh
+   # room_key = 'room_type_' + room
+   # dat[neigh_key] = 1
+   # dat[room_key] = 1
+
+   # dataf = pd.DataFrame(data = dat, index = [0])
+   # return dataf
 
 
 
