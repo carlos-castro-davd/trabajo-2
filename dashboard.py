@@ -656,6 +656,26 @@ app.layout = html.Div([
     Input(component_id='review', component_property='value')
 )
 def update_model(n_clicks, superhost, neighb, room, accomodates, beds, bath, nights, availab, reviews, listings, review):
+    """Recibe los inputs del modelo, y devuelve el valor a predecir.
+
+    Parameters:
+    n_clicks(int) = Será un 1 cuando el usuario clickee el boton de enviar, 0 de lo contrario
+    superhost(str) = Valor que escoja el usuario 'true' si es superhost, 'false' de lo contrario
+    neighb(str) = Valor del barrio escogido
+    room(str) = Valor del tipo de habitacion escogido
+    accomodates(int) = Numero de personas que acomoda el inmueble
+    beds(int) = Numero de camas del inmueble
+    bath(int) = Numero de baños del inmueble
+    nights(int) = Numero de noches minimas de estancia
+    availab(int) = Numero de noches disponible en un año
+    reviews(int) = Numero de reviews que tiene la publicacion
+    listings(int) = Numero de publicaciones del host
+    review(str) = Review escrita por el usuario 
+
+    Returns:
+    En caso de que se cliquee el boton, retornara el precio en una frase. En caso contrario, no devuelve nada
+    """
+
     if(n_clicks > 0):
         print(bool(superhost == 'True'))
         dataf = getDataFrame(bool(superhost == 'True'), neighb, room, accomodates,
@@ -673,7 +693,14 @@ def update_model(n_clicks, superhost, neighb, room, accomodates, beds, bath, nig
     Input(component_id='my-dropdown', component_property='value')
 )
 def update_graph(v):
+    """Recibe un rango de precios escogido por el usuario, y devuelve la figura correspondiente.
 
+    Parameters:
+    v: Corresponde al rango de la distribucion de precios que se quiere mostrar
+
+    Returns:
+    Devuelve la figura con el rango indicado
+    """
     data_x = df_listings['price'][df_listings['price'] <= v]
 
     fig = go.Figure(
@@ -700,7 +727,15 @@ def update_graph(v):
     State(component_id='range-slider-precio', component_property='value')
 )
 def update_map(toogle, range):
+    """Recibe un rango de precios escogido por el usuario, y el tipo de figura que quiere visualizar, y devuelve la figura correspondiente.
 
+    Parameters:
+    toggle(bool): Indica el tipo de grafica que quiere ver el usuario. En caso de que el usuario quiera ver el mapa de calor será False, en caso de que quiera ver un scatter en el mapa True.
+    range([int, int]): Corresponde al rango de precios que el usuario quiera visualizar. Será una lista [ValorInicial, Valor Final].
+
+    Returns:
+    Devuelve la figura indicada con el rango indicado
+    """
     # nos quedamos con el dataframe que queremos
     valor_ini = range[0]
     print(valor_ini)
@@ -745,7 +780,14 @@ def update_map(toogle, range):
     Input(component_id='room_exploratorio', component_property='value')
 )
 def update_boxplot(v):
+    """Recibe un tipo de habitacion y devuelve el box-plot correspondiente.
 
+    Parameters:
+    v(str): Indica el tipo de habitación sobre la cual se quiere mostrar el Box-Plot de precios
+
+    Returns:
+    Devuelve la distribución de precios del tipo de habitacion indicada
+    """
     figure = go.Figure(
         data=[
             go.Box(
@@ -766,11 +808,27 @@ def update_boxplot(v):
     return figure
 
 
-# A la funcion esta le tiene que entrar lo que sale del dash del modelo; Devuelve un dataframe, haces modelo.predict(el dataframe)[0] y es el precio
-# @app.callback(
-#
-# )
+
 def getDataFrame(superhost, neighb, room, accomodates, beds, bath, nights, availab, reviews, listings, review):
+    """Recibe los inputs del modelo, y devuelve un dataframe que se empleará para predecir el precio.
+
+    Parameters:
+    superhost(str) = Valor que escoja el usuario 'true' si es superhost, 'false' de lo contrario
+    neighb(str) = Valor del barrio escogido
+    room(str) = Valor del tipo de habitacion escogido
+    accomodates(int) = Numero de personas que acomoda el inmueble
+    beds(int) = Numero de camas del inmueble
+    bath(int) = Numero de baños del inmueble
+    nights(int) = Numero de noches minimas de estancia
+    availab(int) = Numero de noches disponible en un año
+    reviews(int) = Numero de reviews que tiene la publicacion
+    listings(int) = Numero de publicaciones del host
+    review(str) = Review escrita por el usuario 
+
+    Returns:
+    Devuelve un dataframe con los tipos adecuados para el modelo, y el formato listo para predecir.  
+    """
+
     puntuacion = float(multilang_classifier(review)[0]['label'].split(' ')[0])
 
     dat = {
