@@ -17,23 +17,29 @@ from dash.exceptions import PreventUpdate
 # --------------------------------------------------------------------
 # Datos
 
-# df_calendar = pd.read_csv("/Users/diegoma/kaggle/calendar.csv")
-#df_listings = pd.read_csv("/Users/diegoma/kaggle/listings.csv")
-#df_neighbourhoods = pd.read_csv("/Users/diegoma/kaggle/neighbourhoods.csv")
-# df_reviews = pd.read_csv("/Users/diegoma/kaggle/reviews.csv")
-# df_reviews_det = pd.read_csv("/Users/diegoma/kaggle/reviews_detailed.csv")
-# df_listings_det = pd.read_csv("/Users/diegoma/kaggle/listings_detailed.csv")
+df_calendar = pd.read_csv("/Users/diegoma/kaggle/calendar.csv")
+df_listings = pd.read_csv("/Users/diegoma/kaggle/listings.csv")
+df_neighbourhoods = pd.read_csv("/Users/diegoma/kaggle/neighbourhoods.csv")
+df_reviews = pd.read_csv("/Users/diegoma/kaggle/reviews.csv")
+df_reviews_det = pd.read_csv("/Users/diegoma/kaggle/reviews_detailed.csv")
+df_listings_det = pd.read_csv("/Users/diegoma/kaggle/listings_detailed.csv")
 
 
-#Jaime
-df_listings = pd.read_csv("/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/listings.csv")
-df_neighbourhoods = pd.read_csv("/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/neighbourhoods.csv")
-modelo = joblib.load("/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/DataFinal/modelo_RF.pkl")
+# Jaime
+# df_listings = pd.read_csv(
+#    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/listings.csv")
+# df_neighbourhoods = pd.read_csv(
+#    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/neighbourhoods.csv")
+# modelo = joblib.load(
+#    "/Users/jaime/Documents/ICAI/Quinto/Desarrollo Apps de Visualización/Trabajo/DataFinal/modelo_RF.pkl")
 
-tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
-model_nlp = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
-multilang_classifier = pipeline("sentiment-analysis", 
-                                model=model_nlp, tokenizer = tokenizer)
+modelo = joblib.load("/Users/diegoma/modelo_RF.pkl")
+tokenizer = AutoTokenizer.from_pretrained(
+    "nlptown/bert-base-multilingual-uncased-sentiment")
+model_nlp = AutoModelForSequenceClassification.from_pretrained(
+    "nlptown/bert-base-multilingual-uncased-sentiment")
+multilang_classifier = pipeline(
+    "sentiment-analysis", model=model_nlp, tokenizer=tokenizer)
 
 # --------------------------------------------------------------------
 # Dashboard Ini
@@ -271,26 +277,21 @@ app.layout = html.Div([
                                 )
                             ),
                             html.H5(
-                                "Escoja el tipo de habitación: "
+                                "Escoja el tipo de habitación: ", style=style_texto
                             ),
                             html.Br(),
                             dcc.Dropdown(
-                                options = options_room,
-                                placeholder = "Selecciona el tipo de habitación",
-                                id = "room_exploratorio",
-                                style = {
-                                    "display": "block",
-                                    "width": "300px",
-                                    "margin-left": "10px"
-                                }
+                                options=options_room,
+                                value='Hotel room',
+                                placeholder="Selecciona el tipo de habitación",
+                                id="room_exploratorio",
+                                style=dropdown_style,
+                                searchable=False
                             ),
                             dcc.Graph(
                                 id='box-plot_room'
                             )
-                        ],
-                        style={
-                            'padding-left': '4%', 'width': '46%',
-                            'display': 'inline-block'}
+                        ]
                     ),
                     html.P("Otro factor importante a tener en cuenta será el tipo de habitación que se ofrezca, pudiendo ser una habitación privada, un apartamento, habitación compartida, o habitación de hotel. En este caso, la mayoría de publicaciones corresponden a habitaciones privadas o apartamentos enteros. Además, podemos comprobar que en los casos de las habitaciones de hotel o apartamentos privados, el precio tiende a ser mucho mayor, como es de esperar.", style=style_texto),
                 ]),
@@ -301,153 +302,14 @@ app.layout = html.Div([
             style=tab_style,
             selected_style=tab_selected_style,
             children=[
-<<<<<<< HEAD
-                dcc.Tabs(
-                    vertical=True,
+                html.Br(),
+                html.Br(),
+                html.H3(
                     children=[
-                        dcc.Tab(
-                            label='Resultados',
-                            style=tab_style,
-                            selected_style=tab_selected_style,
-                            children=[
-                                html.Br(),
-                                html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
-                                html.Div(
-                                    children=[
-
-                                    ]
-                                )
-                            ]
-                        ),
-                        dcc.Tab(
-                            label='App',
-                            style=tab_style,
-                            selected_style=tab_selected_style,
-                            children=[
-                                html.Br(),
-                                html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
-                                html.Div(
-                                    style={
-                                        'width': '20%', 'display': 'inline-block'},
-                                    children=[
-                                        html.P("Superhost:",
-                                               style=style_texto),
-                                        dcc.Dropdown(
-                                            id='app-input-superhost',
-                                            value='No',
-                                            style=dropdown_style_2,
-                                            options=[
-                                                {'label': 'Yes', 'value': 'Yes'},
-                                                {'label': 'No', 'value': 'No'}
-                                            ],
-                                            searchable=False
-                                        ),
-                                        html.P('Neighbourhood:',
-                                               style=style_texto),
-                                        dcc.Dropdown(
-                                            id='app-input-neighbourhood',
-                                            style=dropdown_style_2,
-                                            options=[
-                                                {'label': 'Chamartín',
-                                                    'value': 'Chamartín'},
-                                                {'label': 'Latina',
-                                                    'value': 'Latina'},
-                                                {'label': 'Arganzuela',
-                                                    'value': 'Arganzuela'},
-                                                {'label': 'Centro',
-                                                    'value': 'Centro'},
-                                                {'label': 'Salamanca',
-                                                    'value': 'Salamanca'},
-                                                {'label': 'Fuencarral - El Pardo',
-                                                    'value': 'Fuencarral - El Pardo'},
-                                                {'label': 'Puente de Vallecas',
-                                                    'value': 'Puente de Vallecas'},
-                                                {'label': 'Ciudad Lineal',
-                                                    'value': 'Ciudad Lineal'},
-                                                {'label': 'Chamberí',
-                                                    'value': 'Chamberí'},
-                                                {'label': 'Villaverde',
-                                                    'value': 'Villaverde'},
-                                                {'label': 'Hortaleza',
-                                                    'value': 'Hortaleza'},
-                                                {'label': 'Moncloa - Aravaca',
-                                                    'value': 'Moncloa - Aravaca'},
-                                                {'label': 'Carabanchel',
-                                                    'value': 'Carabanchel'},
-                                                {'label': 'Tetuán',
-                                                    'value': 'Tetuán'},
-                                                {'label': 'Retiro',
-                                                    'value': 'Retiro'},
-                                                {'label': 'San Blas - Canillejas',
-                                                    'value': 'San Blas - Canillejas'},
-                                                {'label': 'Villa de Vallecas',
-                                                    'value': 'Villa de Vallecas'},
-                                                {'label': 'Barajas',
-                                                    'value': 'Barajas'},
-                                                {'label': 'Usera',
-                                                    'value': 'Usera'},
-                                                {'label': 'Moratalaz',
-                                                    'value': 'Moratalaz'},
-                                                {'label': 'Vicálvaro',
-                                                    'value': 'Vicálvaro'}
-                                            ],
-                                            searchable=True
-                                        ),
-                                        html.P("Longitude:",
-                                               style=style_texto),
-                                        dcc.Input(
-                                            id='app-input-longitude',
-                                            placeholder='Enter a value...',
-                                            type='text',
-                                            value='',
-                                            style=style_input
-                                        ),
-                                        html.P("Latitude:", style=style_texto),
-                                        dcc.Input(
-                                            id='app-input-latitude',
-                                            placeholder='Enter a value...',
-                                            type='text',
-                                            value='',
-                                            style=style_input
-                                        )
-                                    ]
-                                ),
-                                html.Div(
-                                    style={
-                                        'width': '20%', 'display': 'inline-block'},
-                                    children=[
-                                        html.P("Room Type:",
-                                               style=style_texto),
-                                        dcc.Dropdown(
-                                            id='app-input-room-type',
-                                            value='',
-                                            style=dropdown_style_2,
-                                            options=[
-                                                {'label': 'Entire home/apt',
-                                                    'value': 'Entire home/apt'},
-                                                {'label': 'Private room',
-                                                    'value': 'Private room'},
-                                                {'label': 'Shared room',
-                                                    'value': 'Shared room'},
-                                                {'label': 'Hotel room',
-                                                    'value': 'Hotel room'}
-                                            ],
-                                            searchable=False
-                                        ),
-                                    ]
-                                )
-                            ]
-                        )
-                    ],
-                )
-=======
-
-                html.H3( 
-                    children = [
                         "Prediccion de precio"
                     ],
-                    id = "subtituloModelo",
-                    style ={
+                    id="subtituloModelo",
+                    style={
                         "text-align": "center",
                         "font-family": "verdana",
                         "display": "block"
@@ -455,14 +317,14 @@ app.layout = html.Div([
                 ),
                 html.P(
                     "A continuacion, se ofrece la posibilidad de predecir el precio de una publicacion de Airbnb ficticia, introduciendo los datos pertinentes",
-                    style ={
+                    style={
                         "text-align": "center",
                         "font-family": "verdana",
                         "display": "block"
                     }
                 ),
                 html.Div(
-                    children = [
+                    children=[
                         html.Div(
                             children=[
                                 html.H5(
@@ -471,8 +333,9 @@ app.layout = html.Div([
                                 html.Br(),
                                 dcc.RadioItems(
                                     id="superhost",
-                                    options=[{'label': 'Si', 'value': 'True'},{'label':'No','value': 'False'}],
-                                    labelStyle={'display': 'inline-block'}                                
+                                    options=[{'label': 'Si', 'value': 'True'}, {
+                                        'label': 'No', 'value': 'False'}],
+                                    labelStyle={'display': 'inline-block'}
                                 ),
                                 html.Br(),
                                 html.Br(),
@@ -482,21 +345,21 @@ app.layout = html.Div([
                                 ),
                                 html.Br(),
                                 dcc.Dropdown(
-                                    options = options_neigh,
-                                    placeholder = "Selecciona barrio",
-                                    id = "dropdown_neighb",
-                                    style = {
+                                    options=options_neigh,
+                                    placeholder="Selecciona barrio",
+                                    id="dropdown_neighb",
+                                    style={
                                         "display": "block",
                                         "width": "300px",
                                         "margin-left": "10px"
                                     }
                                 ),
                             ],
-                            style = {
-                            "width": "300px",
-                            "height": "200px",
-                            "display": "inline-block",
-                            "margin": "30px"
+                            style={
+                                "width": "300px",
+                                "height": "200px",
+                                "display": "inline-block",
+                                "margin": "30px"
                             }
                         ),
                         html.Div(
@@ -506,10 +369,10 @@ app.layout = html.Div([
                                 ),
                                 html.Br(),
                                 dcc.Dropdown(
-                                    options = options_room,
-                                    placeholder = "Selecciona el tipo de habitación",
-                                    id = "dropdown_room",
-                                    style = {
+                                    options=options_room,
+                                    placeholder="Selecciona el tipo de habitación",
+                                    id="dropdown_room",
+                                    style={
                                         "display": "block",
                                         "width": "300px",
                                         "margin-left": "10px"
@@ -525,15 +388,15 @@ app.layout = html.Div([
                                 dcc.Input(
                                     id="AccomInput",
                                     type="number",
-                                    min = 1,
-                                    max = 20
+                                    min=1,
+                                    max=20
                                 )
                             ],
-                            style = {
-                            "width": "300px",
-                            "height": "200px",
-                            "display": "inline-block",
-                            "margin": "30px"
+                            style={
+                                "width": "300px",
+                                "height": "200px",
+                                "display": "inline-block",
+                                "margin": "30px"
                             }
                         ),
                         html.Div(
@@ -545,8 +408,8 @@ app.layout = html.Div([
                                 dcc.Input(
                                     id="BedroomsInput",
                                     type="number",
-                                    min = 1,
-                                    max = 20
+                                    min=1,
+                                    max=20
                                 ),
                                 html.Br(),
                                 html.Br(),
@@ -558,16 +421,16 @@ app.layout = html.Div([
                                 dcc.Input(
                                     id="BathInput",
                                     type="number",
-                                    min = 1,
-                                    max = 20
+                                    min=1,
+                                    max=20
                                 ),
                             ],
-                            style = {
-                            "width": "300px",
-                            "height": "200px",
-                            "display": "inline-block",
-                            "margin": "30px"
-                            }  
+                            style={
+                                "width": "300px",
+                                "height": "200px",
+                                "display": "inline-block",
+                                "margin": "30px"
+                            }
                         ),
                         html.Div(
                             children=[
@@ -578,8 +441,8 @@ app.layout = html.Div([
                                 dcc.Input(
                                     id="MinNights",
                                     type="number",
-                                    min = 0,
-                                    max = 30
+                                    min=0,
+                                    max=30
                                 ),
                                 html.Br(),
                                 html.Br(),
@@ -591,16 +454,16 @@ app.layout = html.Div([
                                 dcc.Input(
                                     id="Availab365",
                                     type="number",
-                                    min = 0,
-                                    max = 365
+                                    min=0,
+                                    max=365
                                 ),
                             ],
-                            style = {
-                            "width": "300px",
-                            "height": "200px",
-                            "display": "inline-block",
-                            "margin": "30px"
-                            }  
+                            style={
+                                "width": "300px",
+                                "height": "200px",
+                                "display": "inline-block",
+                                "margin": "30px"
+                            }
                         ),
                         html.Div(
                             children=[
@@ -611,8 +474,8 @@ app.layout = html.Div([
                                 dcc.Input(
                                     id="numberReviews",
                                     type="number",
-                                    min = 1,
-                                    max = 800
+                                    min=1,
+                                    max=800
                                 ),
                                 html.Br(),
                                 html.Br(),
@@ -624,16 +487,16 @@ app.layout = html.Div([
                                 dcc.Input(
                                     id="numberListings",
                                     type="number",
-                                    min = 1,
-                                    max = 300
+                                    min=1,
+                                    max=300
                                 ),
                             ],
-                            style = {
-                            "width": "300px",
-                            "height": "300px",
-                            "display": "inline-block",
-                            "margin": "30px"
-                            }  
+                            style={
+                                "width": "300px",
+                                "height": "300px",
+                                "display": "inline-block",
+                                "margin": "30px"
+                            }
                         ),
                         html.Div(
                             children=[
@@ -644,16 +507,17 @@ app.layout = html.Div([
                                 dcc.Textarea(
                                     id="review",
                                     placeholder="Introduzca review",
-                                    value = "",
-                                    style={'width': '500px', 'height': "100px", "margin": "auto"}
+                                    value="",
+                                    style={'width': '300px',
+                                           'height': "100px", "margin": "auto"}
                                 )
                             ],
-                            style = {
-                            "width": "300px",
-                            "height": "300px",
-                            "display": "inline-block",
-                            "margin": "30px"
-                            }  
+                            style={
+                                "width": "300px",
+                                "height": "300px",
+                                "display": "inline-block",
+                                "margin": "30px"
+                            }
                         )
                     ],
                     style={
@@ -663,20 +527,27 @@ app.layout = html.Div([
                         "border-width": "5px",
                         "background-color": "snow ",
                         'font-family': 'verdana',
-                        "margin" : "20px"
-                        
+                        "margin": "20px"
+
                     }
                 ),
                 html.Div(
                     children=[
                         html.Br(),
-                        html.Button('Enviar',id='Submit_button',n_clicks=0)
+                        html.Button('Enviar',
+                                    id='submit-button',
+                                    n_clicks=0
+                                    ),
+                        html.Br(),
+                        html.P(id='app-text-output',
+                               style=style_texto,
+                               children='Texto Previo'
+                               )
                     ],
                     style={
                         "text-align": "center"
                     }
-                ),
->>>>>>> ce198ca0c65de9f9bb7c5ebb66f9de9c0c568b4c
+                )
             ]
         )
     ])
@@ -684,6 +555,45 @@ app.layout = html.Div([
 
 # -----------------------------------------------------------------------------------------
 # Callback
+
+
+@app.callback(
+    Output(component_id='app-text-output', component_property='children'),
+    Input(component_id='submit-button', component_property='n_clicks'),
+    Input(component_id='superhost', component_property='value'),
+    Input(component_id='dropdown_neighb', component_property='value'),
+    Input(component_id='dropdown_room', component_property='value'),
+    Input(component_id='AccomInput', component_property='value'),
+    Input(component_id='BedroomsInput', component_property='value'),
+    Input(component_id='BathInput', component_property='value'),
+    Input(component_id='MinNights', component_property='value'),
+    Input(component_id='Availab365', component_property='value'),
+    Input(component_id='numberReviews', component_property='value'),
+    Input(component_id='numberListings', component_property='value'),
+    Input(component_id='review', component_property='value')
+)
+def update_model(n_clicks, superhost, neighb, room, accomodates, beds, bath, nights, availab, reviews, listings, review):
+    if(n_clicks > 0):
+        dataf = getDataFrame(bool(superhost == 'True'), neighb, room, accomodates,
+                             beds, bath, nights, availab, reviews, listings, review)
+        prediction = modelo.predict(dataf)[0]
+        return 'El input es "{}" "{}" "{}" "{}" "{}"     "{}" "{}" "{}" "{}" "{}"     "{}" "{}" Y la prediccion es: "{}" '.format(
+            n_clicks,
+            superhost,
+            neighb,
+            room,
+            accomodates,
+            beds,
+            bath,
+            nights,
+            availab,
+            reviews,     # van 10
+            listings,
+            review,
+            prediction
+        )
+    else:
+        return ''
 
 
 @app.callback(
@@ -764,11 +674,11 @@ def update_map(toogle, range):
 )
 def update_boxplot(v):
 
-    figure=go.Figure(
+    figure = go.Figure(
         data=[
             go.Box(
                 y=df_listings[df_listings["room_type"]
-                            == v]["price"],
+                              == v]["price"],
                 marker_color="steelblue",
                 name="Precio",
                 boxmean=True
@@ -776,42 +686,39 @@ def update_boxplot(v):
         ],
         layout=go.Layout(
             yaxis_title="Precio",
-            xaxis_title="Distribución de precios para habitaciones de tipo " + str(v)
+            xaxis_title="Distribución de precios para habitaciones de tipo " +
+            str(v)
         )
     )
 
     return figure
 
 
+# A la funcion esta le tiene que entrar lo que sale del dash del modelo; Devuelve un dataframe, haces modelo.predict(el dataframe)[0] y es el precio
+# @app.callback(
+#
+# )
+def getDataFrame(superhost, neighb, room, accomodates, beds, bath, nights, availab, reviews, listings, review):
+    puntuacion = float(multilang_classifier(review)[0]['label'].split(' ')[0])
 
-##### A la funcion esta le tiene que entrar lo que sale del dash del modelo; Devuelve un dataframe, haces modelo.predict(el dataframe)[0] y es el precio
-#@app.callback(
-#    
-#)
-#def getPredDataFrame(superhost, accomodates, beds, bath, nights, availab, reviews, listings, review, neigh, room):
- #   
- #   puntuacion = float(multilang_classifier(review)[0]['label'].split(' ')[0])
- #   
- #   dat = {
- #       'host_is_superhost': superhost, 'latitude': 40.42051, 'longitude': -3.69506, 'accommodates': accomodates, 'bathrooms': bath, 'bedrooms': beds,
- #       'minimum_nights': nights, 'availability_365': availab, 'number_of_reviews': reviews, 'calculated_host_listings_count': listings, 'puntuacion': puntuacion,
- #       'neighbourhood_group_cleansed_Arganzuela': 0, 'neighbourhood_group_cleansed_Barajas': 0, 'neighbourhood_group_cleansed_Carabanchel': 0,
- #       'neighbourhood_group_cleansed_Centro': 0, 'neighbourhood_group_cleansed_Chamartín': 0, 'neighbourhood_group_cleansed_Chamberí': 0, 
- #       'neighbourhood_group_cleansed_Ciudad Lineal': 0, 'neighbourhood_group_cleansed_Fuencarral - El Pardo': 0, 'neighbourhood_group_cleansed_Hortaleza': 0, 'neighbourhood_group_cleansed_Latina': 0,
- #       'neighbourhood_group_cleansed_Moncloa - Aravaca': 0, 'neighbourhood_group_cleansed_Moratalaz': 0, 'neighbourhood_group_cleansed_Puente de Vallecas': 0, 'neighbourhood_group_cleansed_Retiro': 0,
- #       'neighbourhood_group_cleansed_Salamanca': 0, 'neighbourhood_group_cleansed_San Blas - Canillejas': 0, 'neighbourhood_group_cleansed_Tetuán': 0, 
- #       'neighbourhood_group_cleansed_Usera': 0, 'neighbourhood_group_cleansed_Vicálvaro': 0, 'neighbourhood_group_cleansed_Villa de Vallecas': 0, 
- #       'neighbourhood_group_cleansed_Villaverde': 0, 'room_type_Entire home/apt': 0, 'room_type_Hotel room': 0, 'room_type_Private room': 0, 'room_type_Shared room': 0
-  #  }
+    dat = {
+        'host_is_superhost': superhost, 'latitude': 40.42051, 'longitude': -3.69506, 'accommodates': accomodates, 'bathrooms': bath, 'bedrooms': beds,
+        'minimum_nights': nights, 'availability_365': availab, 'number_of_reviews': reviews, 'calculated_host_listings_count': listings, 'puntuacion': puntuacion,
+        'neighbourhood_group_cleansed_Arganzuela': 0, 'neighbourhood_group_cleansed_Barajas': 0, 'neighbourhood_group_cleansed_Carabanchel': 0,
+        'neighbourhood_group_cleansed_Centro': 0, 'neighbourhood_group_cleansed_Chamartín': 0, 'neighbourhood_group_cleansed_Chamberí': 0,
+        'neighbourhood_group_cleansed_Ciudad Lineal': 0, 'neighbourhood_group_cleansed_Fuencarral - El Pardo': 0, 'neighbourhood_group_cleansed_Hortaleza': 0, 'neighbourhood_group_cleansed_Latina': 0,
+        'neighbourhood_group_cleansed_Moncloa - Aravaca': 0, 'neighbourhood_group_cleansed_Moratalaz': 0, 'neighbourhood_group_cleansed_Puente de Vallecas': 0, 'neighbourhood_group_cleansed_Retiro': 0,
+        'neighbourhood_group_cleansed_Salamanca': 0, 'neighbourhood_group_cleansed_San Blas - Canillejas': 0, 'neighbourhood_group_cleansed_Tetuán': 0,
+        'neighbourhood_group_cleansed_Usera': 0, 'neighbourhood_group_cleansed_Vicálvaro': 0, 'neighbourhood_group_cleansed_Villa de Vallecas': 0,
+        'neighbourhood_group_cleansed_Villaverde': 0, 'room_type_Entire home/apt': 0, 'room_type_Hotel room': 0, 'room_type_Private room': 0, 'room_type_Shared room': 0
+    }
+    neigh_key = 'neighbourhood_group_cleansed_' + neighb
+    room_key = 'room_type_' + room
+    dat[neigh_key] = 1
+    dat[room_key] = 1
 
-   # neigh_key = 'neighbourhood_group_cleansed_' + neigh
-   # room_key = 'room_type_' + room
-   # dat[neigh_key] = 1
-   # dat[room_key] = 1
-
-   # dataf = pd.DataFrame(data = dat, index = [0])
-   # return dataf
-
+    dataf = pd.DataFrame(data=dat, index=[0])
+    return dataf
 
 
 # -----------------------------------------------------------------------------------------
