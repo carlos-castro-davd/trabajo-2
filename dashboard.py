@@ -71,10 +71,20 @@ style_texto_2 = {
     'font-family': 'verdana',
     'size': 9
 }
+style_input = {
+    'font-family': 'verdana',
+    'margin-left': 80,
+    'width': 390
+}
 dropdown_style = {
     'font-family': 'verdana',
     'padding-left': 80,
     'width': 500
+}
+dropdown_style_2 = {
+    'font-family': 'verdana',
+    'padding-left': 80,
+    'width': 400
 }
 colorines = ["aliceblue", "antiquewhite", "aqua", "beige", "bisque", "black", "blueviolet", "cornsilk", "darkkhaki", "darkgrey", "darkgreen",
              "firebrick", "gainsboro", "ivory", "crimson", "darkslategray", "indigo", "mediumaquamarine", "olivedrab", "peachpuff", "mediumspringgreen"]
@@ -115,11 +125,13 @@ app.layout = html.Div([
                         html.P('Distribución del precio', style=style_texto),
                         dcc.Dropdown(
                             id='my-dropdown',
-                            value='RC',
+                            value=300,
                             style=dropdown_style,
                             options=[
-                                {'label': 'Rango Completo', 'value': 'RC'},
-                                {'label': 'Rango (0,300)', 'value': 'R300'}
+                                {'label': 'Rango Completo', 'value': 10000},
+                                {'label': 'Rango (0,300)', 'value': 300},
+                                {'label': 'Rango (0,200)', 'value': 200},
+                                {'label': 'Rango (0,100)', 'value': 100}
                             ],
                             searchable=False
                         ),
@@ -276,21 +288,142 @@ app.layout = html.Div([
             selected_style=tab_selected_style,
             children=[
                 dcc.Tabs(
+                    vertical=True,
                     children=[
                         dcc.Tab(
                             label='Resultados',
                             style=tab_style,
                             selected_style=tab_selected_style,
-                            children=[]
+                            children=[
+                                html.Br(),
+                                html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
+                                html.Div(
+                                    children=[
+
+                                    ]
+                                )
+                            ]
                         ),
                         dcc.Tab(
                             label='App',
                             style=tab_style,
                             selected_style=tab_selected_style,
-                            children=[]
+                            children=[
+                                html.Br(),
+                                html.P("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.", style=style_texto),
+                                html.Div(
+                                    style={
+                                        'width': '20%', 'display': 'inline-block'},
+                                    children=[
+                                        html.P("Superhost:",
+                                               style=style_texto),
+                                        dcc.Dropdown(
+                                            id='app-input-superhost',
+                                            value='No',
+                                            style=dropdown_style_2,
+                                            options=[
+                                                {'label': 'Yes', 'value': 'Yes'},
+                                                {'label': 'No', 'value': 'No'}
+                                            ],
+                                            searchable=False
+                                        ),
+                                        html.P('Neighbourhood:',
+                                               style=style_texto),
+                                        dcc.Dropdown(
+                                            id='app-input-neighbourhood',
+                                            style=dropdown_style_2,
+                                            options=[
+                                                {'label': 'Chamartín',
+                                                    'value': 'Chamartín'},
+                                                {'label': 'Latina',
+                                                    'value': 'Latina'},
+                                                {'label': 'Arganzuela',
+                                                    'value': 'Arganzuela'},
+                                                {'label': 'Centro',
+                                                    'value': 'Centro'},
+                                                {'label': 'Salamanca',
+                                                    'value': 'Salamanca'},
+                                                {'label': 'Fuencarral - El Pardo',
+                                                    'value': 'Fuencarral - El Pardo'},
+                                                {'label': 'Puente de Vallecas',
+                                                    'value': 'Puente de Vallecas'},
+                                                {'label': 'Ciudad Lineal',
+                                                    'value': 'Ciudad Lineal'},
+                                                {'label': 'Chamberí',
+                                                    'value': 'Chamberí'},
+                                                {'label': 'Villaverde',
+                                                    'value': 'Villaverde'},
+                                                {'label': 'Hortaleza',
+                                                    'value': 'Hortaleza'},
+                                                {'label': 'Moncloa - Aravaca',
+                                                    'value': 'Moncloa - Aravaca'},
+                                                {'label': 'Carabanchel',
+                                                    'value': 'Carabanchel'},
+                                                {'label': 'Tetuán',
+                                                    'value': 'Tetuán'},
+                                                {'label': 'Retiro',
+                                                    'value': 'Retiro'},
+                                                {'label': 'San Blas - Canillejas',
+                                                    'value': 'San Blas - Canillejas'},
+                                                {'label': 'Villa de Vallecas',
+                                                    'value': 'Villa de Vallecas'},
+                                                {'label': 'Barajas',
+                                                    'value': 'Barajas'},
+                                                {'label': 'Usera',
+                                                    'value': 'Usera'},
+                                                {'label': 'Moratalaz',
+                                                    'value': 'Moratalaz'},
+                                                {'label': 'Vicálvaro',
+                                                    'value': 'Vicálvaro'}
+                                            ],
+                                            searchable=True
+                                        ),
+                                        html.P("Longitude:",
+                                               style=style_texto),
+                                        dcc.Input(
+                                            id='app-input-longitude',
+                                            placeholder='Enter a value...',
+                                            type='text',
+                                            value='',
+                                            style=style_input
+                                        ),
+                                        html.P("Latitude:", style=style_texto),
+                                        dcc.Input(
+                                            id='app-input-latitude',
+                                            placeholder='Enter a value...',
+                                            type='text',
+                                            value='',
+                                            style=style_input
+                                        )
+                                    ]
+                                ),
+                                html.Div(
+                                    style={
+                                        'width': '20%', 'display': 'inline-block'},
+                                    children=[
+                                        html.P("Room Type:",
+                                               style=style_texto),
+                                        dcc.Dropdown(
+                                            id='app-input-room-type',
+                                            value='',
+                                            style=dropdown_style_2,
+                                            options=[
+                                                {'label': 'Entire home/apt',
+                                                    'value': 'Entire home/apt'},
+                                                {'label': 'Private room',
+                                                    'value': 'Private room'},
+                                                {'label': 'Shared room',
+                                                    'value': 'Shared room'},
+                                                {'label': 'Hotel room',
+                                                    'value': 'Hotel room'}
+                                            ],
+                                            searchable=False
+                                        ),
+                                    ]
+                                )
+                            ]
                         )
                     ],
-                    vertical=True
                 )
             ]
         )
@@ -307,10 +440,7 @@ app.layout = html.Div([
 )
 def update_graph(v):
 
-    if(v == 'R300'):
-        data_x = df_listings['price'][df_listings['price'] <= 300]
-    else:
-        data_x = df_listings['price']
+    data_x = df_listings['price'][df_listings['price'] <= v]
 
     fig = go.Figure(
         data=[
